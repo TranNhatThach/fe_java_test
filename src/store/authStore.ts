@@ -7,6 +7,7 @@ export type Role = 'HOC_VIEN' | 'GIA_SU';
 
 interface User {
   id: string;
+  userId?: number;
   email: string;
   name: string;
   role: Role;

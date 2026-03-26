@@ -81,16 +81,15 @@ export function RegisterPage() {
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid grid-cols-2 gap-4">
+        <form onSubmit={handleSubmit} className="space-y-3">
+          <div className="grid grid-cols-2 gap-3">
             <button
               type="button"
               onClick={() => setRole("HOC_VIEN")}
-              className={`p-4 rounded-2xl border-2 transition-all flex flex-col items-center gap-2 ${
-                role === "HOC_VIEN"
-                  ? "border-emerald-500 bg-emerald-50 text-emerald-700"
-                  : "border-slate-100 bg-slate-50 text-slate-500 hover:border-slate-200"
-              }`}
+              className={`p-4 rounded-2xl border-2 transition-all flex flex-col items-center gap-2 ${role === "HOC_VIEN"
+                ? "border-emerald-500 bg-emerald-50 text-emerald-700"
+                : "border-slate-100 bg-slate-50 text-slate-500 hover:border-slate-200"
+                }`}
             >
               <User className="w-8 h-8" />
               <span className="font-bold">Học viên</span>
@@ -98,11 +97,10 @@ export function RegisterPage() {
             <button
               type="button"
               onClick={() => setRole("GIA_SU")}
-              className={`p-4 rounded-2xl border-2 transition-all flex flex-col items-center gap-2 ${
-                role === "GIA_SU"
-                  ? "border-emerald-500 bg-emerald-50 text-emerald-700"
-                  : "border-slate-100 bg-slate-50 text-slate-500 hover:border-slate-200"
-              }`}
+              className={`p-4 rounded-2xl border-2 transition-all flex flex-col items-center gap-2 ${role === "GIA_SU"
+                ? "border-emerald-500 bg-emerald-50 text-emerald-700"
+                : "border-slate-100 bg-slate-50 text-slate-500 hover:border-slate-200"
+                }`}
             >
               <UserCheck className="w-8 h-8" />
               <span className="font-bold">Gia sư</span>

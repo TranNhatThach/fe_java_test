@@ -12,6 +12,7 @@ import { JobListPage } from './pages/tutor/JobListPage';
 import { TutorDashboardPage } from './pages/tutor/TutorDashboardPage';
 import { MyClassesPage } from './pages/shared/MyClassesPage';
 import { TutorProfilePage } from './pages/tutor/TutorProfilePage';
+import { TutorDetailPage } from './pages/student/TutorDetailPage';
 import UsersPage from './pages/UsersPage';
 import NotFoundPage from './pages/error/NotFoundPage';
 import ServerErrorPage from './pages/error/ServerErrorPage';
@@ -37,13 +38,14 @@ export default function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/users" element={<UsersPage />} />
-          
+
           {/* Student Routes */}
           <Route path="/student" element={<PrivateRoute allowedRole="HOC_VIEN" />}>
             <Route element={<StudentLayout />}>
               <Route path="dashboard" element={<StudentDashboardPage />} />
               <Route path="search" element={<SearchTutorsPage />} />
               <Route path="classes" element={<MyClassesPage />} />
+              <Route path="tutor/:id" element={<TutorDetailPage />} />
               <Route path="payments" element={<div className="p-8"><h1 className="text-2xl font-bold font-sans">Thanh toán</h1><p className="text-slate-500">Lịch sử giao dịch và hóa đơn</p></div>} />
             </Route>
           </Route>

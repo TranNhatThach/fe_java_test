@@ -8,7 +8,8 @@ interface LoginResponse {
   username: string;
   role: Role;
   token: string;
-  email?: string; // Optional since backend might not return it
+  email?: string; 
+  userId?: number;
 }
 
 
@@ -31,7 +32,8 @@ export function useAuth() {
           id: data.email || variables.email, 
           email: data.email || variables.email,
           name: data.username,
-          role: data.role
+          role: data.role,
+          userId: data.userId
         }, data.token);
       }
     },
