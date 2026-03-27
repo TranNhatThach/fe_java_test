@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useStudent } from '../../hooks/useStudent';
 import { useAuthStore } from '../../store/authStore';
-import { 
-  User, MapPin, BookOpen, Clock, Star, ArrowLeft, 
-  DollarSign, GraduationCap, Send, Loader2, Calendar, 
-  Map as MapIcon, Info, CheckCircle2 
+import {
+  User, MapPin, BookOpen, Clock, Star, ArrowLeft,
+  DollarSign, GraduationCap, Send, Loader2, Calendar,
+  Map as MapIcon, Info, CheckCircle2
 } from 'lucide-react';
 
 export function TutorDetailPage() {
@@ -15,7 +15,7 @@ export function TutorDetailPage() {
   const { user } = useAuthStore();
   const { data: tutor, isLoading, isError } = getTutorById(id || '');
   const { data: allSubjects } = getSubjects();
-  
+
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [invitationSent, setInvitationSent] = useState(false);
   const [inviteData, setInviteData] = useState({
@@ -70,7 +70,7 @@ export function TutorDetailPage() {
         <Info className="w-16 h-16 text-slate-300 mx-auto mb-4" />
         <h2 className="text-2xl font-bold text-slate-900 mb-2">Không tìm thấy gia sư</h2>
         <p className="text-slate-500 mb-6">Có lỗi xảy ra hoặc gia sư này không tồn tại.</p>
-        <button 
+        <button
           onClick={() => navigate('/student/search')}
           className="bg-emerald-600 text-white px-8 py-3 rounded-2xl font-bold hover:bg-emerald-700 transition-all"
         >
@@ -84,7 +84,7 @@ export function TutorDetailPage() {
     <div className="max-w-5xl mx-auto space-y-8 animate-in fade-in duration-500 font-sans">
       {/* Header / Back Button */}
       <div className="flex items-center justify-between">
-        <button 
+        <button
           onClick={() => navigate(-1)}
           className="flex items-center text-slate-500 hover:text-emerald-600 font-bold transition-colors group"
         >
@@ -100,12 +100,12 @@ export function TutorDetailPage() {
         <div className="lg:col-span-1 space-y-6">
           <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-xl overflow-hidden relative">
             <div className="absolute top-0 left-0 w-full h-32 bg-emerald-600/5 -z-10"></div>
-            
+
             <div className="text-center mb-6">
               <div className="w-32 h-32 rounded-[2rem] bg-white shadow-xl border-4 border-white overflow-hidden mx-auto mb-4">
-                <img 
-                  src={tutor.avatar || `https://picsum.photos/seed/${tutor.maGiaSu}/200/200`} 
-                  alt={tutor.name} 
+                <img
+                  src={tutor.avatar || `https://picsum.photos/seed/${tutor.maGiaSu}/200/200`}
+                  alt={tutor.name}
                   className="w-full h-full object-cover"
                 />
               </div>
@@ -152,7 +152,7 @@ export function TutorDetailPage() {
             <p className="text-emerald-50 text-sm leading-relaxed mb-6 opacity-90 relative z-10">
               Gửi lời mời ngay để bắt đầu hành trình chinh phục kiến thức cùng gia sư {tutor.name}.
             </p>
-            <button 
+            <button
               onClick={() => setShowInviteModal(true)}
               className="w-full bg-white text-emerald-600 py-4 rounded-2xl font-bold hover:bg-emerald-50 transition-all shadow-lg active:scale-95 relative z-10"
             >
@@ -167,7 +167,7 @@ export function TutorDetailPage() {
             <h2 className="text-2xl font-bold text-slate-900 mb-6 flex items-center gap-3">
               <User className="w-6 h-6 text-emerald-600" /> Thông tin chuyên môn
             </h2>
-            
+
             <div className="grid md:grid-cols-2 gap-8">
               <div className="space-y-6">
                 <div>
@@ -226,7 +226,7 @@ export function TutorDetailPage() {
               <Star className="w-6 h-6 text-emerald-600" /> Giới thiệu bản thân
             </h2>
             <p className="text-slate-600 leading-relaxed text-lg italic bg-slate-50/50 p-6 rounded-3xl border border-dashed border-slate-200">
-              "Chào bạn, tôi là {tutor.name}. Với niềm đam mê giảng dạy và kinh nghiệm tích lũy, tôi tin rằng mình có thể giúp bạn không chỉ đạt được điểm số cao mà còn khơi gợi tình yêu với môn học. Tôi luôn ưu tiên phương pháp tư duy thay vì học thuộc lòng."
+              {tutor.moTa || "Chào bạn, tôi là " + tutor.name + ". Với niềm đam mê giảng dạy và kinh nghiệm tích lũy, tôi tin rằng mình có thể giúp bạn không chỉ đạt được điểm số cao mà còn khơi gợi tình yêu với môn học. Tôi luôn ưu tiên phương pháp tư duy thay vì học thuộc lòng."}
             </p>
           </div>
         </div>
@@ -236,7 +236,7 @@ export function TutorDetailPage() {
       {showInviteModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={() => setShowInviteModal(false)}></div>
-          
+
           <div className="bg-white w-full max-w-2xl rounded-[2.5rem] shadow-2xl relative overflow-hidden animate-in zoom-in duration-300">
             {invitationSent ? (
               <div className="p-12 text-center py-20">
@@ -249,7 +249,7 @@ export function TutorDetailPage() {
             ) : (
               <>
                 <div className="bg-emerald-600 p-8 text-white relative">
-                  <button 
+                  <button
                     onClick={() => setShowInviteModal(false)}
                     className="absolute top-6 right-6 text-white/50 hover:text-white transition-colors"
                   >
@@ -263,30 +263,24 @@ export function TutorDetailPage() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-1.5">
                       <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Môn học</label>
-                      <select 
+                      <select
                         required
                         className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500"
                         value={inviteData.tenMon}
-                        onChange={(e) => setInviteData({...inviteData, tenMon: e.target.value})}
+                        onChange={(e) => setInviteData({ ...inviteData, tenMon: e.target.value })}
                       >
-                        <option value="">Chọn môn học</option>
-                        {allSubjects?.map((s: any) => (
-                          <option key={s.maMon} value={s.tenMon}>{s.tenMon}</option>
-                        ))}
+                        <option value="">{tutor.subjects.join(", ")}</option>
                       </select>
                     </div>
                     <div className="space-y-1.5">
-                      <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Trình độ mong muốn</label>
-                      <select 
+                      <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Trình độ gia sư</label>
+                      <select
                         required
                         className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500"
                         value={inviteData.trinhDo}
-                        onChange={(e) => setInviteData({...inviteData, trinhDo: e.target.value})}
+                        onChange={(e) => setInviteData({ ...inviteData, trinhDo: e.target.value })}
                       >
-                        <option value="">Chọn trình độ</option>
-                        <option value="Cơ bản">Cơ bản</option>
-                        <option value="Nâng cao">Nâng cao</option>
-                        <option value="Luyện thi">Luyện thi</option>
+                        <option value="">{tutor.trinhDo}</option>
                       </select>
                     </div>
                   </div>
@@ -295,16 +289,16 @@ export function TutorDetailPage() {
                     <div className="space-y-1.5">
                       <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Hình thức học</label>
                       <div className="grid grid-cols-2 gap-2">
-                        <button 
+                        <button
                           type="button"
-                          onClick={() => setInviteData({...inviteData, hinhThuc: 'Trực tiếp'})}
+                          onClick={() => setInviteData({ ...inviteData, hinhThuc: 'Trực tiếp' })}
                           className={`px-4 py-2 rounded-xl border font-bold text-sm transition-all ${inviteData.hinhThuc === 'Trực tiếp' ? 'bg-emerald-600 text-white border-emerald-600' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'}`}
                         >
                           Trực tiếp
                         </button>
-                        <button 
+                        <button
                           type="button"
-                          onClick={() => setInviteData({...inviteData, hinhThuc: 'Online'})}
+                          onClick={() => setInviteData({ ...inviteData, hinhThuc: 'Online' })}
                           className={`px-4 py-2 rounded-xl border font-bold text-sm transition-all ${inviteData.hinhThuc === 'Online' ? 'bg-emerald-600 text-white border-emerald-600' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'}`}
                         >
                           Online
@@ -313,49 +307,49 @@ export function TutorDetailPage() {
                     </div>
                     <div className="space-y-1.5">
                       <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Địa điểm / Nền tảng</label>
-                      <input 
-                        type="text" 
+                      <input
+                        type="text"
                         required
-                        placeholder="Nhập địa chỉ hoặc app học (Zoom, Meet...)"
+                        placeholder="Nhập địa chỉ dạy học"
                         className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500"
                         value={inviteData.diaDiem}
-                        onChange={(e) => setInviteData({...inviteData, diaDiem: e.target.value})}
+                        onChange={(e) => setInviteData({ ...inviteData, diaDiem: e.target.value })}
                       />
                     </div>
                   </div>
 
                   <div className="space-y-1.5">
                     <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Lịch học dự kiến</label>
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       required
                       placeholder="Ví dụ: T2-T4-T6, từ 18h đến 20h"
                       className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500"
                       value={inviteData.lichHocDuKien}
-                      onChange={(e) => setInviteData({...inviteData, lichHocDuKien: e.target.value})}
+                      onChange={(e) => setInviteData({ ...inviteData, lichHocDuKien: e.target.value })}
                     />
                   </div>
 
                   <div className="space-y-1.5">
                     <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Lời nhắn gửi gia sư</label>
-                    <textarea 
+                    <textarea
                       rows={3}
                       placeholder="Viết vài dòng giới thiệu về tình hình học tập và mong muốn của bạn..."
                       className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 resize-none"
                       value={inviteData.loiNhan}
-                      onChange={(e) => setInviteData({...inviteData, loiNhan: e.target.value})}
+                      onChange={(e) => setInviteData({ ...inviteData, loiNhan: e.target.value })}
                     />
                   </div>
 
                   <div className="flex justify-end gap-3 pt-4">
-                    <button 
+                    <button
                       type="button"
                       onClick={() => setShowInviteModal(false)}
                       className="px-6 py-3 rounded-xl font-bold text-slate-600 hover:bg-slate-50 transition-all"
                     >
                       Hủy bỏ
                     </button>
-                    <button 
+                    <button
                       type="submit"
                       disabled={mutation.isPending}
                       className="px-10 py-3 bg-emerald-600 text-white rounded-xl font-bold hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-200 flex items-center gap-2 disabled:opacity-70"

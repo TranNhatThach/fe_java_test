@@ -27,7 +27,7 @@ export function useTutor() {
       queryFn: async () => {
         const data = await apiClient<any[]>('/danh-sach-yeu-cau');
         return data.map((item: any) => ({
-          id: item.id.toString(),
+          id: item.maYeuCau?.toString() || Math.random().toString(),
           title: item.moTa ? (item.moTa.length > 50 ? item.moTa.substring(0, 50) + '...' : item.moTa) : `Cần gia sư ${item.monHoc?.tenMon || ''}`,
           subject: item.monHoc?.tenMon || 'Môn học khác',
           grade: item.trinhDo || 'Tất cả trình độ',
@@ -39,10 +39,10 @@ export function useTutor() {
 
 
   const applyJob = useMutation({
-    mutationFn: (requestId: string) =>
+    mutationFn: (data: { maGiaSu: number; maYeuCau: number; loiNhan: string; mucHocPhiDeXuat: number }) =>
       apiClient('/tuyen-dung/ung-tuyen', {
         method: 'POST',
-        body: JSON.stringify({ requestId }),
+        body: JSON.stringify(data),
       }),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['jobs'] }),
   });

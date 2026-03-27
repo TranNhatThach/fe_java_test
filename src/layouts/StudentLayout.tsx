@@ -1,6 +1,6 @@
 import { Link, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
-import { LayoutDashboard, Search, BookOpen, LogOut, User, Menu, X, CreditCard } from 'lucide-react';
+import { LayoutDashboard, Search, BookOpen, LogOut, User, Menu, X, CreditCard, Users, UserCircle } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '../utils/cn';
 
@@ -16,10 +16,12 @@ export function StudentLayout() {
   };
 
   const navItems = [
-    { to: '/student/dashboard', icon: LayoutDashboard, label: 'Tổng quan' },
-    { to: '/student/search', icon: Search, label: 'Tìm gia sư' },
-    { to: '/student/classes', icon: BookOpen, label: 'Lớp học của tôi' },
-    { to: '/student/payments', icon: CreditCard, label: 'Thanh toán' },
+    { to: '/student/dashboard', icon: LayoutDashboard, label: 'Tong quan' },
+    { to: '/student/search', icon: Search, label: 'Tim gia su' },
+    { to: '/student/applicants', icon: Users, label: 'Gia su ung tuyen' },
+    { to: '/student/classes', icon: BookOpen, label: 'Lop hoc cua toi' },
+    { to: '/student/profile', icon: UserCircle, label: 'Ho so ca nhan' },
+    { to: '/student/payments', icon: CreditCard, label: 'Thanh toan' },
   ];
 
   return (

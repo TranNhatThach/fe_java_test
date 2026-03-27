@@ -17,6 +17,7 @@ export interface Tutor {
   maGiaSu?: number;
   diemDanhGia?: number;
   soHocVien?: number;
+  moTa?: string;
 }
 
 
@@ -61,11 +62,11 @@ export function useStudent() {
         const mappedContent = content.map((item: any) => ({
           id: item.username, // Use username as ID if no ID provided
           username: item.username,
-          name: item.username, // Display username as name for now
+          name: item.hoTen || item.username, // Ưu tiên họ tên thật, fallback username
           subjects: item.monHoc ? [item.monHoc] : [],
           trinhDo: item.trinhDo,
           viTri: item.viTri,
-          rating: 5, // Default rating
+          rating: 5, // Mặc định
           price: item.hocPhiMoiGio || 0,
           avatar: item.avatar,
           truongDaiHoc: item.truongDaiHoc,
@@ -73,7 +74,8 @@ export function useStudent() {
           soNamKinhNghiem: item.soNamKinhNghiem,
           maGiaSu: item.maGiaSu,
           diemDanhGia: item.diemDanhGia,
-          soHocVien: item.soHocVien
+          soHocVien: item.soHocVien,
+          moTa: item.moTa
         }));
 
         return {
@@ -120,7 +122,7 @@ export function useStudent() {
         return {
           id: item.username,
           username: item.username,
-          name: item.username,
+          name: item.hoTen || item.username, // Ưu tiên họ tên thật
           subjects: item.monHoc ? [item.monHoc] : [],
           trinhDo: item.trinhDo,
           viTri: item.viTri,
@@ -132,7 +134,8 @@ export function useStudent() {
           soNamKinhNghiem: item.soNamKinhNghiem,
           maGiaSu: item.maGiaSu,
           diemDanhGia: item.diemDanhGia,
-          soHocVien: item.soHocVien
+          soHocVien: item.soHocVien,
+          moTa: item.moTa
         } as Tutor;
       },
       enabled: !!id,

@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { BookOpen, User, UserCheck, ArrowLeft, Loader2 } from "lucide-react";
 import { apiClient } from "../../api/client";
-import { address, p } from "motion/react-client";
 
 export function RegisterPage() {
   const [role, setRole] = useState<"HOC_VIEN" | "GIA_SU">("HOC_VIEN");
