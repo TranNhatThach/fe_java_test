@@ -1,8 +1,9 @@
 import { Link, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
-import { LayoutDashboard, Briefcase, Mail, BookOpen, LogOut, User, Menu, X, CreditCard } from 'lucide-react';
+import { LayoutDashboard, Briefcase, Mail, BookOpen, LogOut, User, Menu, X, CreditCard, ClipboardList } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '../utils/cn';
+import { NotificationBell } from '../components/NotificationBell';
 
 export function TutorLayout() {
   const { user, logout } = useAuthStore();
@@ -18,6 +19,7 @@ export function TutorLayout() {
   const navItems = [
     { to: '/tutor/dashboard', icon: LayoutDashboard, label: 'Tổng quan' },
     { to: '/tutor/jobs', icon: Briefcase, label: 'Việc làm mới' },
+    { to: '/tutor/applications', icon: ClipboardList, label: 'Đơn ứng tuyển' },
     { to: '/tutor/invitations', icon: Mail, label: 'Lời mời dạy' },
     { to: '/tutor/classes', icon: BookOpen, label: 'Lớp học của tôi' },
     { to: '/tutor/profile', icon: User, label: 'Hồ sơ cá nhân' },
@@ -34,7 +36,7 @@ export function TutorLayout() {
           </div>
           <span className="text-2xl font-bold tracking-tight text-slate-900">TutorConnect</span>
         </div>
-        
+
         <nav className="flex-1 px-4 space-y-1.5">
           {navItems.map((item) => (
             <Link
@@ -59,15 +61,17 @@ export function TutorLayout() {
         <div className="p-6 border-t border-slate-100">
           <div className="bg-slate-50 rounded-2xl p-4 mb-4 flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 shadow-inner">
-              <User className="w-6 h-6" />
+              <button onClick={() => navigate('/tutor/profile')}>
+                <User className="w-6 h-6 hover:cursor-pointer" />
+              </button>
             </div>
             <div className="overflow-hidden">
               <p className="text-sm font-bold text-slate-900 truncate">{user?.name}</p>
               <p className="text-xs text-slate-500 truncate">Gia sư</p>
             </div>
           </div>
-          <button 
-            onClick={handleLogout} 
+          <button
+            onClick={handleLogout}
             className="flex items-center w-full px-4 py-3 text-slate-600 hover:bg-red-50 hover:text-red-600 rounded-xl transition-all group"
           >
             <LogOut className="w-5 h-5 mr-3 text-slate-400 group-hover:text-red-500" />
@@ -97,9 +101,12 @@ export function TutorLayout() {
             <h2 className="text-xl font-bold text-slate-900">Chào mừng trở lại, {user?.name}! 👋</h2>
             <p className="text-sm text-slate-500">Bạn đã sẵn sàng cho những buổi dạy mới chưa?</p>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
+            <NotificationBell />
             <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 border-2 border-white shadow-sm">
-              <User className="w-6 h-6" />
+              <button onClick={() => navigate('/tutor/profile')}>
+                <User className="w-6 h-6 hover:cursor-pointer" />
+              </button>
             </div>
           </div>
         </header>
@@ -128,7 +135,7 @@ export function TutorLayout() {
                   {item.label}
                 </Link>
               ))}
-              <button 
+              <button
                 onClick={handleLogout}
                 className="flex items-center w-full px-4 py-4 text-red-600 hover:bg-red-50 rounded-xl transition-all"
               >

@@ -17,6 +17,7 @@ interface AuthState {
   user: User | null;
   token: string | null;
   setAuth: (user: User, token: string) => void;
+  updateUser: (partial: Partial<User>) => void;
   logout: () => void;
 }
 
@@ -28,6 +29,11 @@ export const useAuthStore = create<AuthState>()(
       setAuth: (user, token) => {
         setCookie('accessToken', token, 7); // Set for 7 days
         set({ user, token });
+      },
+      updateUser: (partial) => {
+        set((state) => ({
+          user: state.user ? { ...state.user, ...partial } : state.user,
+        }));
       },
       logout: () => {
         deleteCookie('accessToken');

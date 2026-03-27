@@ -14,9 +14,11 @@ interface ProfileData {
 }
 
 export function StudentProfilePage() {
-  const { user } = useAuthStore();
+  const { user, updateUser } = useAuthStore();
   const [isLoading, setIsLoading] = useState(false);
   const [isFetching, setIsFetching] = useState(true);
+  const [successMsg, setSuccessMsg] = useState('');
+  const [errorMsg, setErrorMsg] = useState('');
   const [formData, setFormData] = useState<ProfileData>({
     hoTen: '',
     email: '',
@@ -52,14 +54,28 @@ export function StudentProfilePage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    setSuccessMsg('');
+    setErrorMsg('');
     try {
-      await apiClient('/tai-khoan/profile', {
+      const result = await apiClient<any>('/tai-khoan/profile', {
         method: 'PUT',
         body: JSON.stringify(formData),
       });
-      alert('Cap nhat ho so thanh cong!');
+      // Cập nhật lại form từ dữ liệu server trả về
+      setFormData({
+        hoTen: result.hoTen || '',
+        email: result.email || '',
+        soDienThoai: result.soDienThoai || '',
+        viTri: result.viTri || '',
+        lopHoc: result.lopHoc || '',
+        truongHoc: result.truongHoc || '',
+        hinhThucHocUuTien: result.hinhThucHocUuTien || 'Hoc tai nha',
+      });
+      // Đồng bộ tên mới vào authStore (cập nhật sidebar/header)
+      if (result.hoTen) updateUser({ name: result.hoTen });
+      setSuccessMsg('Cập nhật hồ sơ thành công!');
     } catch (err: any) {
-      alert('Loi: ' + (err.message || 'Khong the cap nhat ho so.'));
+      setErrorMsg('Lỗi: ' + (err.message || 'Không thể cập nhật hồ sơ.'));
     } finally {
       setIsLoading(false);
     }
@@ -77,9 +93,20 @@ export function StudentProfilePage() {
   return (
     <div className="max-w-4xl mx-auto font-sans">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-slate-900 mb-2 tracking-tight">Ho so ca nhan</h1>
-        <p className="text-slate-500 text-lg">Cap nhat thong tin de nhan nhung goi y phu hop nhat</p>
+        <h1 className="text-3xl font-bold text-slate-900 mb-2 tracking-tight">Hồ sơ cá nhân</h1>
+        <p className="text-slate-500 text-lg">Cập nhật thông tin để nhận những gợi ý phù hợp nhất</p>
       </div>
+
+      {successMsg && (
+        <div className="mb-6 px-5 py-3 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-2xl font-medium">
+          ✓ {successMsg}
+        </div>
+      )}
+      {errorMsg && (
+        <div className="mb-6 px-5 py-3 bg-red-50 border border-red-200 text-red-700 rounded-2xl font-medium">
+          ✕ {errorMsg}
+        </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Left Column - Avatar & Quick Info */}
