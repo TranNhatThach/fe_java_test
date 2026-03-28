@@ -44,7 +44,10 @@ export function useTutor() {
         method: 'POST',
         body: JSON.stringify(data),
       }),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['jobs'] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['jobs'] });
+      queryClient.invalidateQueries({ queryKey: ['tutor-applications'] });
+    },
   });
 
   const getInvitations = (tutorId: string) =>

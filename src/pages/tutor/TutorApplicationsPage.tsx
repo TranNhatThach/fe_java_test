@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { apiClient } from '../../api/client';
 import { useAuthStore } from '../../store/authStore';
 import {
@@ -52,44 +53,26 @@ const statusStyle = (s: string) => {
 
 export function TutorApplicationsPage() {
   const { user } = useAuthStore();
-  const [applications, setApplications] = useState<UngTuyen[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [selected, setSelected] = useState<UngTuyen | null>(null);
   const [chatRooms, setChatRooms] = useState<Record<number, ChatMessage[]>>({});
   const [inputMsg, setInputMsg] = useState('');
   const chatEndRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => { fetchApplications(); }, []);
+  const { data: applications = [], isLoading } = useQuery({
+    queryKey: ['tutor-applications', user?.userId],
+    queryFn: async () => {
+      if (!user?.userId) return [];
+      // Gọi trực tiếp endpoint lấy danh sách đơn đã ứng tuyển theo mã gia sư
+      const data = await apiClient<UngTuyen[]>(`/tuyen-dung/da-ung-tuyen/${user.userId}`);
+      return data || [];
+    },
+    enabled: !!user?.userId,
+    refetchOnWindowFocus: true,
+  });
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [selected, chatRooms]);
-
-  const fetchApplications = useCallback(async () => {
-    if (!user?.userId) return;
-    setIsLoading(true);
-    try {
-      // Lấy tất cả yêu cầu, sau đó lọc những cái maGiaSu này đã ứng tuyển
-      const allRequests = await apiClient<YeuCau[]>('/danh-sach-yeu-cau');
-      const results: UngTuyen[] = [];
-      await Promise.all(
-        (allRequests || []).map(async (yc) => {
-          try {
-            const applicants = await apiClient<UngTuyen[]>(
-              `/tuyen-dung/danh-sach-ung-vien/${yc.maYeuCau}`
-            );
-            const mine = (applicants || []).filter(
-              (a) => a.giaSu?.maGiaSu === user.userId
-            );
-            mine.forEach((a) => results.push({ ...a, yeuCauTimGiaSu: yc }));
-          } catch { /* bỏ qua lỗi từng request */ }
-        })
-      );
-      setApplications(results);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [user?.userId]);
 
   const sendMessage = () => {
     if (!inputMsg.trim() || !selected) return;
