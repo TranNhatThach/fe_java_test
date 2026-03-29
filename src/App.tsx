@@ -11,6 +11,7 @@ import { StudentDashboardPage } from './pages/student/StudentDashboardPage';
 import { JobListPage } from './pages/tutor/JobListPage';
 import { TutorDashboardPage } from './pages/tutor/TutorDashboardPage';
 import { MyClassesPage } from './pages/shared/MyClassesPage';
+import { PaymentPage } from './pages/shared/PaymentPage';
 import { TutorProfilePage } from './pages/tutor/TutorProfilePage';
 import { TutorInvitationsPage } from './pages/tutor/TutorInvitationsPage';
 import { TutorApplicationsPage } from './pages/tutor/TutorApplicationsPage';
@@ -54,7 +55,7 @@ export default function App() {
               <Route path="profile" element={<StudentProfilePage />} />
               <Route path="applicants" element={<StudentApplicantsPage />} />
               <Route path="requests" element={<StudentRequestPage />} />
-              <Route path="payments" element={<div className="p-8"><h1 className="text-2xl font-bold font-sans">Thanh toán</h1><p className="text-slate-500">Lịch sử giao dịch và hóa đơn</p></div>} />
+              <Route path="payments" element={<PaymentPage />} />
             </Route>
           </Route>
 
@@ -67,7 +68,7 @@ export default function App() {
               <Route path="applications" element={<TutorApplicationsPage />} />
               <Route path="classes" element={<MyClassesPage />} />
               <Route path="profile" element={<TutorProfilePage />} />
-              <Route path="payments" element={<div className="p-8"><h1 className="text-2xl font-bold font-sans">Thu nhập</h1><p className="text-slate-500">Thống kê thu nhập và rút tiền</p></div>} />
+              <Route path="payments" element={<PaymentPage />} />
             </Route>
           </Route>
 

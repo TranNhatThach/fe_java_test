@@ -22,16 +22,16 @@ function timeAgo(dateStr: string): string {
 function loaiIcon(loai: string) {
   switch (loai) {
     case 'TUYEN_DUNG': return <Users className="w-4 h-4 text-emerald-600" />;
-    case 'LOP_HOC':    return <BookOpen className="w-4 h-4 text-blue-500" />;
-    default:           return <Info className="w-4 h-4 text-slate-400" />;
+    case 'LOP_HOC': return <BookOpen className="w-4 h-4 text-blue-500" />;
+    default: return <Info className="w-4 h-4 text-slate-400" />;
   }
 }
 
 function loaiBg(loai: string) {
   switch (loai) {
     case 'TUYEN_DUNG': return 'bg-emerald-50';
-    case 'LOP_HOC':    return 'bg-blue-50';
-    default:           return 'bg-slate-50';
+    case 'LOP_HOC': return 'bg-blue-50';
+    default: return 'bg-slate-50';
   }
 }
 
@@ -47,21 +47,28 @@ export function NotificationBell() {
   const maTaiKhoan = user?.userId;
 
   const fetchNotifications = useCallback(async () => {
-    if (!maTaiKhoan) return;
+    // Không cần truyền ID nữa, API /my sẽ tự lấy từ token
     try {
-      const data = await apiClient<ThongBao[]>(`/notifications/${maTaiKhoan}`);
+      const data = await apiClient<ThongBao[]>(`/notifications/my`);
       setNotifications(data || []);
     } catch { /* silent */ }
-  }, [maTaiKhoan]);
+  }, []);
 
-  // Fetch ngay khi mount, sau đó polling mỗi 30s
+  // Fetch ngay khi mount hoặc khi người dùng thay đổi (sau khi đăng nhập)
   useEffect(() => {
-    fetchNotifications();
-    pollRef.current = setInterval(fetchNotifications, 30_000);
+    if (user) {
+      fetchNotifications();
+    }
+    
+    // Polling mỗi 30s để cập nhật trạng thái
+    pollRef.current = setInterval(() => {
+      if (user) fetchNotifications();
+    }, 30_000);
+
     return () => {
       if (pollRef.current) clearInterval(pollRef.current);
     };
-  }, [fetchNotifications]);
+  }, [user, fetchNotifications]);
 
   // Đóng dropdown khi click ngoài
   useEffect(() => {
@@ -83,13 +90,19 @@ export function NotificationBell() {
     );
     try {
       await apiClient(`/notifications/${maThongBao}/read`, { method: 'PUT' });
-    } catch { /* rollback nếu cần */ }
+    } catch { /* silent */ }
   };
 
   const markAllRead = async () => {
     const unread = notifications.filter((n) => !n.daDoc);
+    if (unread.length === 0) return;
+
     setNotifications((prev) => prev.map((n) => ({ ...n, daDoc: true })));
-    await Promise.all(unread.map((n) => apiClient(`/notifications/${n.maThongBao}/read`, { method: 'PUT' }).catch(() => {})));
+    try {
+      await Promise.all(unread.map((n) =>
+        apiClient(`/notifications/${n.maThongBao}/read`, { method: 'PUT' }).catch(() => { })
+      ));
+    } catch { /* silent */ }
   };
 
   const handleOpen = () => {
@@ -102,14 +115,28 @@ export function NotificationBell() {
       {/* Bell button */}
       <button
         onClick={handleOpen}
-        className="relative p-2 text-slate-400 hover:text-emerald-600 transition-colors rounded-xl hover:bg-slate-100"
+        className="relative p-2.5 text-slate-400 hover:text-emerald-600 transition-all duration-300 rounded-2xl hover:bg-slate-100 group shadow-sm hover:shadow-md"
         aria-label="Thông báo"
       >
-        <Bell className="w-5 h-5" />
+        <Bell className="w-5 h-5 group-hover:rotate-12 transition-transform" />
         {unreadCount > 0 && (
-          <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 bg-red-500 text-white text-[10px] font-black rounded-full flex items-center justify-center shadow-sm animate-pulse">
-            {unreadCount > 9 ? '9+' : unreadCount}
-          </span>
+          <div className="absolute top-1.5 right-1.5 flex items-center justify-center">
+            {/* Ping Animation for Real-time feel */}
+            <span className="animate-ping absolute inline-flex h-3 w-3 rounded-full bg-red-400 opacity-75"></span>
+            {/* Static Red Dot (Badge) */}
+            <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500 border-2 border-white shadow-sm">
+              {unreadCount > 0 && unreadCount <= 9 && (
+                <span className="absolute -top-1 -right-1 flex items-center justify-center min-w-[14px] h-[14px] bg-red-600 text-white text-[8px] font-black rounded-full border border-white">
+                  {unreadCount}
+                </span>
+              )}
+              {unreadCount > 9 && (
+                <span className="absolute -top-1 -right-1 flex items-center justify-center min-w-[14px] h-[14px] bg-red-600 text-white text-[8px] font-black rounded-full border border-white">
+                  9+
+                </span>
+              )}
+            </span>
+          </div>
         )}
       </button>
 
@@ -158,9 +185,8 @@ export function NotificationBell() {
                   <button
                     key={n.maThongBao}
                     onClick={() => markAsRead(n.maThongBao)}
-                    className={`w-full text-left px-5 py-4 flex items-start gap-3 hover:bg-slate-50 transition-all border-b border-slate-50 last:border-0 ${
-                      !n.daDoc ? 'bg-blue-50/40' : ''
-                    }`}
+                    className={`w-full text-left px-5 py-4 flex items-start gap-3 hover:bg-slate-50 transition-all border-b border-slate-50 last:border-0 ${!n.daDoc ? 'bg-blue-50/40' : ''
+                      }`}
                   >
                     {/* Icon vòng tròn theo loại */}
                     <div className={`w-9 h-9 rounded-2xl flex items-center justify-center shrink-0 ${loaiBg(n.loai)}`}>

@@ -27,7 +27,7 @@ export const useAuthStore = create<AuthState>()(
       user: null,
       token: getCookie('accessToken') || null,
       setAuth: (user, token) => {
-        setCookie('accessToken', token, 7); // Set for 7 days
+        setCookie('accessToken', token, 1);
         set({ user, token });
       },
       updateUser: (partial) => {
