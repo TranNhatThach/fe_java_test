@@ -422,6 +422,8 @@ export function StudentApplicantsPage() {
                     onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
                   />
                   <button
+                    type="button"
+                    title="Gửi tin nhắn"
                     onClick={sendMessage}
                     disabled={!inputMsg.trim()}
                     className="w-9 h-9 bg-emerald-600 text-white rounded-xl flex items-center justify-center hover:bg-emerald-700 transition-all disabled:opacity-40 shrink-0"
