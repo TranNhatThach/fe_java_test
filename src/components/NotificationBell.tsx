@@ -164,8 +164,11 @@ export function NotificationBell() {
                 </button>
               )}
               <button
+                type="button"
                 onClick={() => setOpen(false)}
                 className="p-1 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100"
+                title="Đóng thông báo"
+                aria-label="Đóng thông báo"
               >
                 <X className="w-4 h-4" />
               </button>

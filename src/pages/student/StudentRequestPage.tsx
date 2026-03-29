@@ -204,6 +204,7 @@ export function StudentRequestPage() {
                 <label className="text-sm font-bold text-slate-700">Trình độ</label>
                 <div className="relative">
                   <select
+                    aria-label="Chọn trình độ"
                     className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-emerald-500 outline-none transition-all appearance-none"
                     value={form.trinhDo}
                     onChange={(e) => setForm({ ...form, trinhDo: e.target.value })}

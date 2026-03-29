@@ -8,6 +8,12 @@ export interface Job {
   grade: string;
   budget: number;
   location: string;
+  hinhThuc?: string;
+  lichHocDuKien?: string;
+  ngayTao?: string;
+  nganSachMin?: number;
+  nganSachMax?: number;
+  moTaChiTiet?: string;
 }
 
 export interface Invitation {
@@ -32,7 +38,13 @@ export function useTutor() {
           subject: item.monHoc?.tenMon || 'Môn học khác',
           grade: item.trinhDo || 'Tất cả trình độ',
           budget: item.nganSachMax || item.nganSachMin || 0,
-          location: item.diaDiem || 'Toàn quốc'
+          location: item.diaDiem || 'Toàn quốc',
+          hinhThuc: item.hinhThuc,
+          lichHocDuKien: item.lichHocDuKien,
+          ngayTao: item.ngayTao,
+          nganSachMin: item.nganSachMin,
+          nganSachMax: item.nganSachMax,
+          moTaChiTiet: item.moTa
         }));
       },
     });

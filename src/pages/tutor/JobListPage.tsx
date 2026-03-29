@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useTutor, Job } from '../../hooks/useTutor';
 import { useAuthStore } from '../../store/authStore';
-import { Briefcase, MapPin, Clock, DollarSign, Loader2, X, Send, MessageSquare } from 'lucide-react';
+import { Briefcase, MapPin, Clock, DollarSign, Loader2, X, Send, MessageSquare, Calendar } from 'lucide-react';
 import { number } from 'motion';
 
 export function JobListPage() {
@@ -70,18 +70,40 @@ export function JobListPage() {
                         {job.grade}
                       </span>
                     </div>
+                    {job.moTaChiTiet && (
+                      <p className="text-slate-500 text-sm line-clamp-2 mt-3">{job.moTaChiTiet}</p>
+                    )}
                   </div>
                 </div>
 
-                <div className="flex flex-wrap gap-6 text-sm">
+                <div className="flex flex-wrap gap-x-6 gap-y-3 text-sm pt-2">
+                  {job.hinhThuc && (
+                    <div className="flex items-center text-slate-500 font-medium">
+                      <Clock className="w-4 h-4 mr-2 text-slate-400" />
+                      {job.hinhThuc}
+                    </div>
+                  )}
                   <div className="flex items-center text-slate-500 font-medium">
                     <MapPin className="w-4 h-4 mr-2 text-slate-400" />
                     {job.location}
                   </div>
-                  <div className="flex items-center text-emerald-600 font-bold bg-emerald-50/50 px-3 py-1 rounded-xl">
-                    <DollarSign className="w-4 h-4 mr-1" />
-                    {job.budget.toLocaleString()}đ / buổi
-                  </div>
+                  {job.lichHocDuKien && (
+                    <div className="flex items-center text-slate-500 font-medium">
+                      <Calendar className="w-4 h-4 mr-2 text-slate-400" />
+                      {job.lichHocDuKien}
+                    </div>
+                  )}
+                  {(job.nganSachMin || job.nganSachMax) ? (
+                    <div className="flex items-center text-emerald-600 font-bold bg-emerald-50/50 px-3 py-1 rounded-xl">
+                      <DollarSign className="w-4 h-4 mr-1" />
+                      {job.nganSachMin?.toLocaleString() || '?'}đ – {job.nganSachMax?.toLocaleString() || '?'}đ / giờ
+                    </div>
+                  ) : (
+                    <div className="flex items-center text-emerald-600 font-bold bg-emerald-50/50 px-3 py-1 rounded-xl">
+                      <DollarSign className="w-4 h-4 mr-1" />
+                      {job.budget?.toLocaleString() || '0'}đ / giờ
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -118,6 +140,8 @@ export function JobListPage() {
                 <p className="text-sm text-slate-500 mt-1">Gửi lời nhắn tới phụ huynh/học viên</p>
               </div>
               <button
+                type="button"
+                title="Close modal"
                 onClick={() => setSelectedJob(null)}
                 className="p-3 hover:bg-white rounded-2xl transition-all text-slate-400 hover:text-slate-900 shadow-sm"
               >
