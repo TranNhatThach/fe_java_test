@@ -63,7 +63,7 @@ export function useStudent() {
           id: item.username, // Use username as ID if no ID provided
           username: item.username,
           name: item.hoTen || item.username, // Ưu tiên họ tên thật, fallback username
-          subjects: item.monHoc ? [item.monHoc] : [],
+          subjects: item.monHoc ? item.monHoc.split(', ') : [],
           trinhDo: item.trinhDo,
           viTri: item.viTri,
           rating: 5, // Mặc định
@@ -123,7 +123,7 @@ export function useStudent() {
           id: item.username,
           username: item.username,
           name: item.hoTen || item.username, // Ưu tiên họ tên thật
-          subjects: item.monHoc ? [item.monHoc] : [],
+          subjects: item.monHoc ? item.monHoc.split(', ') : [],
           trinhDo: item.trinhDo,
           viTri: item.viTri,
           rating: 5,

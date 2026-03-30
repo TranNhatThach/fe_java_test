@@ -35,5 +35,16 @@ export function useShared() {
     }
   });
 
-  return { getMyClasses, updateSchedule };
+  const updateStatus = useMutation({
+    mutationFn: ({ id, status }: { id: number; status: string }) =>
+      apiClient(`/lop-hoc/${id}/status`, {
+        method: 'PUT',
+        params: { status },
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['my-classes'] });
+    },
+  });
+
+  return { getMyClasses, updateSchedule, updateStatus };
 }

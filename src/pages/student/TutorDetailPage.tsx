@@ -263,24 +263,29 @@ export function TutorDetailPage() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-1.5">
                       <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Môn học</label>
-                      <select
+                      <input
+                        type="text"
                         required
+                        placeholder={tutor?.subjects?.length > 0 ? tutor.subjects.join(", ") : "Nhập môn học..."}
                         className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500"
                         value={inviteData.tenMon}
                         onChange={(e) => setInviteData({ ...inviteData, tenMon: e.target.value })}
-                      >
-                        <option value="">{tutor.subjects.join(", ")}</option>
-                      </select>
+                      />
                     </div>
                     <div className="space-y-1.5">
                       <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Trình độ gia sư</label>
                       <select
                         required
-                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500"
+                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 text-slate-700"
                         value={inviteData.trinhDo}
                         onChange={(e) => setInviteData({ ...inviteData, trinhDo: e.target.value })}
                       >
-                        <option value="">{tutor.trinhDo}</option>
+                        <option value="" disabled>-- Chọn trình độ --</option>
+                        <option value="Tiểu học">Tiểu học</option>
+                        <option value="THCS">THCS</option>
+                        <option value="THPT">THPT</option>
+                        <option value="Đại học">Đại học</option>
+                        <option value="Người đi làm">Người đi làm</option>
                       </select>
                     </div>
                   </div>
