@@ -13,6 +13,7 @@ import {
   Clock,
   GraduationCap
 } from "lucide-react";
+import provincesData from "../../constants/provinces.json";
 
 export function SearchTutorsPage() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -25,6 +26,28 @@ export function SearchTutorsPage() {
     location: "",
     level: "",
   });
+
+  const [selectedProvince, setSelectedProvince] = useState("");
+  const [selectedDistrict, setSelectedDistrict] = useState("");
+
+  const handleProvinceChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const province = e.target.value;
+    setSelectedProvince(province);
+    setSelectedDistrict("");
+    setFilters((prev) => ({ ...prev, location: province }));
+    setCurrentPage(0);
+  };
+
+  const handleDistrictChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const district = e.target.value;
+    setSelectedDistrict(district);
+    const newLocation = district ? `${district}, ${selectedProvince}` : selectedProvince;
+    setFilters((prev) => ({ ...prev, location: newLocation }));
+    setCurrentPage(0);
+  };
+
+  const currentProvinceData = provincesData.find((p: any) => p.name === selectedProvince);
+
 
   const { searchTutors, getSubjects } = useStudent();
   const navigate = useNavigate();
@@ -60,6 +83,8 @@ export function SearchTutorsPage() {
       location: "",
       level: "",
     });
+    setSelectedProvince("");
+    setSelectedDistrict("");
     setCurrentPage(0);
   };
 
@@ -119,8 +144,8 @@ export function SearchTutorsPage() {
             </button>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-            <div className="space-y-1.5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+            <div className="space-y-1.5 flex flex-col justify-end">
               <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
                 Môn học
               </label>
@@ -139,22 +164,36 @@ export function SearchTutorsPage() {
               </select>
             </div>
 
-            <div className="space-y-1.5">
+            <div className="space-y-1.5 flex flex-col justify-end">
               <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
-                Địa điểm
+                Tỉnh / Thành
               </label>
               <select
-                name="location"
-                value={filters.location}
-                onChange={handleFilterChange}
+                value={selectedProvince}
+                onChange={handleProvinceChange}
                 className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none"
               >
                 <option value="">Toàn quốc</option>
-                <option value="Hà Nội">Hà Nội</option>
-                <option value="Hồ Chí Minh">TP. Hồ Chí Minh</option>
-                <option value="Đà Nẵng">Đà Nẵng</option>
-                <option value="Hải Phòng">Hải Phòng</option>
-                <option value="Cần Thơ">Cần Thơ</option>
+                {provincesData.map((p: any) => (
+                  <option key={p.code} value={p.name}>{p.name}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="space-y-1.5 flex flex-col justify-end">
+              <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                Quận / Huyện
+              </label>
+              <select
+                value={selectedDistrict}
+                onChange={handleDistrictChange}
+                disabled={!selectedProvince || !currentProvinceData}
+                className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <option value="">Tất cả Quận/Huyện</option>
+                {currentProvinceData?.districts?.map((d: any) => (
+                  <option key={d.code} value={d.name}>{d.name}</option>
+                ))}
               </select>
             </div>
 
@@ -240,7 +279,7 @@ export function SearchTutorsPage() {
                   </div>
                   <div className="flex items-center text-amber-500 bg-amber-50 px-3 py-1.5 rounded-2xl text-sm font-bold shadow-sm border border-amber-100">
                     <Star className="w-4 h-4 mr-1.5 fill-current" />
-                    {tutor.diemDanhGia || 0}
+                    {tutor.diemDanhGia || 0} <span className="text-amber-700/60 font-medium ml-1 text-xs">({tutor.soHocVien || 0} đánh giá)</span>
                   </div>
                 </div>
 
@@ -264,11 +303,6 @@ export function SearchTutorsPage() {
                       {s} {tutor.trinhDo ? `(${tutor.trinhDo})` : ""}
                     </span>
                   ))}
-                  {(!tutor.subjects || tutor.subjects.length === 0) && (
-                    <span className="text-xs text-slate-400 italic">
-                      Chưa cập nhật môn học
-                    </span>
-                  )}
                 </div>
 
                 <div className="space-y-3 mb-8">
@@ -284,15 +318,19 @@ export function SearchTutorsPage() {
                     </div>
                     {tutor.soNamKinhNghiem ? `${tutor.soNamKinhNghiem} năm kinh nghiệm` : "Mới bắt đầu"}
                   </div>
-                  <div className="flex items-center text-slate-900 font-bold text-lg">
-                    <div className="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center mr-3">
-                      <DollarSign className="w-4 h-4 text-emerald-600" />
+                  {tutor.price > 0 && (
+                    <div className="flex items-center text-slate-900 font-bold text-lg">
+                      <div className="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center mr-3 shrink-0">
+                        <DollarSign className="w-4 h-4 text-emerald-600" />
+                      </div>
+                      <>
+                        {tutor.price.toLocaleString()}đ
+                        <span className="text-slate-400 text-sm font-normal ml-1">
+                          / giờ
+                        </span>
+                      </>
                     </div>
-                    {(tutor.price || 0).toLocaleString()}đ{" "}
-                    <span className="text-slate-400 text-sm font-normal ml-1">
-                      / giờ
-                    </span>
-                  </div>
+                  )}
                 </div>
 
                 <button 

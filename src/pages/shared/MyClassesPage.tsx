@@ -1,15 +1,87 @@
 import { useShared } from '../../hooks/useShared';
 import { useAuthStore } from '../../store/authStore';
-import { Calendar, User, BookOpen, Loader2, ChevronRight, Clock, CreditCard, CheckCircle2, AlertCircle, Edit2, X, Save } from 'lucide-react';
+import { Calendar, User, BookOpen, Loader2, ChevronRight, Clock, CheckCircle2, Edit2, X, Save, Star, MessageSquarePlus, CheckSquare, AlertTriangle } from 'lucide-react';
 import { format } from 'date-fns';
 import { vi } from 'date-fns/locale';
 import React, { useState } from 'react';
 import { Class } from '../../hooks/useShared';
+import { DanhGiaModal } from '../../components/DanhGiaModal';
+import { useDanhGia } from '../../hooks/useDanhGia';
+
+// Nút đánh giá — chỉ hiển thị với học viên khi lớp đã HOAN_THANH
+function ClassReviewButton({ cls }: { cls: Class }) {
+  const { getDanhGiaByLop } = useDanhGia();
+  const { data: reviews } = getDanhGiaByLop(cls.maLop);
+  const [showModal, setShowModal] = useState(false);
+  const existingReview = reviews && reviews.length > 0 ? reviews[0] : null;
+
+  if (cls.trangThai !== 'HOAN_THANH') {
+    return (
+      <span className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold text-slate-400 bg-slate-50 border border-slate-100">
+        <AlertTriangle className="w-3.5 h-3.5" />
+        Chưa hoàn thành
+      </span>
+    );
+  }
+
+  return (
+    <>
+      <button
+        onClick={() => setShowModal(true)}
+        className="flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-sm transition-all
+          bg-amber-50 text-amber-600 border border-amber-100 hover:bg-amber-500 hover:text-white hover:border-amber-500 hover:shadow-lg hover:shadow-amber-100"
+      >
+        {existingReview ? (
+          <>
+            <Star className="w-4 h-4 fill-current" />
+            <span className="flex items-center gap-1">
+              {existingReview.diem}
+              <span className="text-amber-400">★</span>
+              Đã đánh giá
+            </span>
+          </>
+        ) : (
+          <>
+            <MessageSquarePlus className="w-4 h-4" />
+            Đánh giá ngay
+          </>
+        )}
+      </button>
+      {showModal && (
+        <DanhGiaModal
+          cls={cls}
+          existingDanhGia={existingReview}
+          onClose={() => setShowModal(false)}
+        />
+      )}
+    </>
+  );
+}
 
 export function MyClassesPage() {
   const { user } = useAuthStore();
-  const { getMyClasses, updateSchedule } = useShared();
+  const { getMyClasses, updateSchedule, updateStatus } = useShared();
+
+  const handleKetThucLop = async (cls: Class) => {
+    if (!window.confirm(`Bạn có chắc muốn kết thúc lớp "${cls.tenMonHoc}"? Học viên sẽ có thể đánh giá sau khi lớp kết thúc.`)) return;
+    try {
+      await updateStatus.mutateAsync({ id: cls.maLop, status: 'HOAN_THANH' });
+    } catch {
+      alert('Không thể cập nhật trạng thái lớp học.');
+    }
+  };
   const { data: classes, isLoading } = getMyClasses();
+  
+  // Sắp xếp lớp học: 'HOAN_THANH' đẩy xuống cuối
+  const sortedClasses = React.useMemo(() => {
+    if (!classes) return [];
+    return [...classes].sort((a, b) => {
+      if (a.trangThai === 'HOAN_THANH' && b.trangThai !== 'HOAN_THANH') return 1;
+      if (a.trangThai !== 'HOAN_THANH' && b.trangThai === 'HOAN_THANH') return -1;
+      return 0;
+    });
+  }, [classes]);
+
   const [view, setView] = useState<'list' | 'schedule'>('list');
   const [editingClass, setEditingClass] = useState<Class | null>(null);
   const [scheduleInput, setScheduleInput] = useState('');
@@ -86,7 +158,7 @@ export function MyClassesPage() {
         <>
           {view === 'list' ? (
             <div className="grid grid-cols-1 gap-6">
-              {classes?.map((cls) => (
+              {sortedClasses.map((cls) => (
                 <div key={cls.maLop} className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm hover:shadow-xl transition-all group relative overflow-hidden">
                   <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full -mr-16 -mt-16 group-hover:bg-emerald-500/10 transition-colors"></div>
                   
@@ -144,19 +216,42 @@ export function MyClassesPage() {
                       <div className="space-y-1.5">
                         <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Trạng thái</p>
                         <div className="flex items-center">
-                          <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest bg-emerald-500 text-white shadow-sm">
-                            {cls.trangThai || 'ĐANG HỌC'}
+                          <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-sm ${
+                            cls.trangThai === 'HOAN_THANH'
+                              ? 'bg-blue-500 text-white'
+                              : 'bg-emerald-500 text-white'
+                          }`}>
+                            {cls.trangThai === 'HOAN_THANH' ? 'HOÀN THÀNH' : (cls.trangThai || 'ĐANG HỌC')}
                           </span>
                         </div>
                       </div>
                     </div>
 
-                    <button 
-                      onClick={() => handleOpenEdit(cls)}
-                      className="bg-slate-50 p-4 rounded-2xl text-slate-400 hover:bg-emerald-600 hover:text-white transition-all group-hover:shadow-lg group-hover:shadow-emerald-100"
-                    >
-                      <ChevronRight className="w-6 h-6" />
-                    </button>
+                    <div className="flex items-center gap-3">
+                      {/* Nút đánh giá - chỉ hiện với học viên */}
+                      {user?.role === 'HOC_VIEN' && (
+                        <ClassReviewButton cls={cls} />
+                      )}
+                      {/* Nút kết thúc lớp - chỉ hiện với gia sư khi lớp đang học */}
+                      {user?.role === 'GIA_SU' && cls.trangThai !== 'HOAN_THANH' && (
+                        <button
+                          onClick={() => handleKetThucLop(cls)}
+                          disabled={updateStatus.isPending}
+                          className="flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-sm transition-all bg-blue-50 text-blue-600 border border-blue-100 hover:bg-blue-600 hover:text-white hover:border-blue-600 hover:shadow-lg hover:shadow-blue-100 disabled:opacity-50"
+                        >
+                          {updateStatus.isPending
+                            ? <Loader2 className="w-4 h-4 animate-spin" />
+                            : <CheckSquare className="w-4 h-4" />}
+                          Kết thúc lớp
+                        </button>
+                      )}
+                      <button
+                        onClick={() => handleOpenEdit(cls)}
+                        className="bg-slate-50 p-4 rounded-2xl text-slate-400 hover:bg-emerald-600 hover:text-white transition-all group-hover:shadow-lg group-hover:shadow-emerald-100"
+                      >
+                        <ChevronRight className="w-6 h-6" />
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}

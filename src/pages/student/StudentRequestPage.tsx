@@ -58,16 +58,12 @@ export function StudentRequestPage() {
   const fetchData = async () => {
     setIsLoading(true);
     try {
-      const [monHocs, yeuCaus] = await Promise.all([
+      const [monHocs, myRequests] = await Promise.all([
         apiClient<MonHoc[]>('/mon-hoc'),
-        apiClient<YeuCau[]>('/danh-sach-yeu-cau'),
+        user?.userId ? apiClient<YeuCau[]>(`/danh-sach-yeu-cau/${user.userId}`) : Promise.resolve([]),
       ]);
       setMonHocList(monHocs || []);
-      // Lọc chỉ yêu cầu của học viên hiện tại
-      const myRequests = (yeuCaus || []).filter(
-        (yc) => yc.hocVien?.maHocVien === user?.userId
-      );
-      setYeuCauList(myRequests);
+      setYeuCauList(myRequests || []);
     } catch (err) {
       console.error('Lỗi tải dữ liệu:', err);
     } finally {
@@ -117,10 +113,14 @@ export function StudentRequestPage() {
   const statusStyle = (status: string) => {
     switch (status?.toUpperCase()) {
       case 'CHỜ DUYỆT': return 'bg-amber-50 text-amber-600 border border-amber-200';
-      case 'ĐANG TÌM':  return 'bg-blue-50 text-blue-600 border border-blue-200';
-      case 'ĐÃ GHÉP':   return 'bg-emerald-50 text-emerald-600 border border-emerald-200';
-      case 'HỦY':       return 'bg-red-50 text-red-500 border border-red-200';
-      default:           return 'bg-slate-50 text-slate-500 border border-slate-200';
+      case 'TRỰC TIẾP': return 'bg-purple-50 text-purple-600 border border-purple-200';
+      case 'ĐANG TÌM':
+      case 'MỞ':        return 'bg-blue-50 text-blue-600 border border-blue-200';
+      case 'ĐÃ GHÉP':
+      case 'ĐÃ GIAO':   return 'bg-emerald-50 text-emerald-600 border border-emerald-200';
+      case 'HỦY':
+      case 'TỪ CHỐI':   return 'bg-red-50 text-red-500 border border-red-200';
+      default:          return 'bg-slate-50 text-slate-500 border border-slate-200';
     }
   };
 
